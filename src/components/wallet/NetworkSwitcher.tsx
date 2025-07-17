@@ -1,23 +1,24 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronDown, Globe, Loader, AlertTriangle, CheckCircle, Zap } from 'lucide-react'
+import { ChevronDown, Globe, Loader, AlertTriangle, CheckCircle } from 'lucide-react'
 import { usePolkadot } from '../../contexts/PolkadotContext'
 
 interface NetworkSwitcherProps {
   className?: string
   size?: 'sm' | 'md' | 'lg'
+  variant?: 'compact' | 'full'
 }
 
 export default function NetworkSwitcher({ 
   className = '', 
-  size = 'md' 
+  size = 'sm',
+  variant = 'compact'
 }: NetworkSwitcherProps) {
   const {
     currentNetwork,
     availableNetworks,
     switchNetwork,
-    isConnecting,
-    chainInfo
+    isConnecting
   } = usePolkadot()
 
   const [showDropdown, setShowDropdown] = useState(false)
@@ -31,7 +32,8 @@ export default function NetworkSwitcher({
 
   const isSmall = size === 'sm'
   const isMedium = size === 'md'
-  const buttonPadding = isSmall ? 'px-2 py-1.5' : isMedium ? 'px-3 py-2' : 'px-4 py-3'
+  const isCompact = variant === 'compact'
+  const buttonPadding = isSmall ? 'px-2 py-1' : isMedium ? 'px-2.5 py-1.5' : 'px-3 py-2'
   const textSize = isSmall ? 'text-xs' : isMedium ? 'text-sm' : 'text-base'
 
   const getNetworkStatusIcon = (network: typeof currentNetwork) => {
@@ -53,30 +55,29 @@ export default function NetworkSwitcher({
       <motion.button
         onClick={() => setShowDropdown(!showDropdown)}
         disabled={isConnecting}
-        className={`flex items-center space-x-2 ${buttonPadding} bg-gray-800/60 backdrop-blur-sm border border-gray-700/60 rounded-lg hover:border-green-500/50 hover:bg-gray-800/80 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${textSize} group`}
+        className={`flex items-center space-x-1.5 ${buttonPadding} bg-gray-800/60 backdrop-blur-sm border border-gray-700/60 rounded-lg hover:border-green-500/50 hover:bg-gray-800/80 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${textSize} group`}
         whileHover={{ scale: isConnecting ? 1 : 1.01 }}
       >
-        <div className="flex items-center space-x-2 min-w-0 flex-1">
+        <div className="flex items-center space-x-1.5 min-w-0">
           {isConnecting ? (
-            <Loader className="w-4 h-4 animate-spin text-yellow-400 flex-shrink-0" />
+            <Loader className="w-3.5 h-3.5 animate-spin text-yellow-400 flex-shrink-0" />
           ) : (
             <div className="relative flex-shrink-0">
-              <div className={`w-6 h-6 bg-gradient-to-br ${getNetworkGradient(currentNetwork)} rounded-lg flex items-center justify-center border border-gray-600/50`}>
-                <Globe className="w-3 h-3 text-gray-300" />
+              <div className={`w-5 h-5 bg-gradient-to-br ${getNetworkGradient(currentNetwork)} rounded-lg flex items-center justify-center border border-gray-600/50`}>
+                <Globe className="w-2.5 h-2.5 text-gray-300" />
               </div>
-              <div className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 ${getNetworkStatusIcon(currentNetwork)} rounded-full border border-gray-800`} />
+              {!isCompact && (
+                <div className={`absolute -bottom-0.5 -right-0.5 w-2 h-2 ${getNetworkStatusIcon(currentNetwork)} rounded-full border border-gray-800`} />
+              )}
             </div>
           )}
           
-          <div className="flex flex-col items-start min-w-0 flex-1">
-            <span className="font-medium text-white truncate text-sm">
+          <div className="flex items-center space-x-1 min-w-0">
+            <span className="font-medium text-white truncate">
               {currentNetwork.name}
             </span>
-            {!isSmall && (
-              <div className="flex items-center space-x-1.5">
-                <span className="text-xs text-gray-400">
-                  {currentNetwork.symbol}
-                </span>
+            {!isCompact && !isSmall && (
+              <>
                 <span className="text-xs text-gray-600">•</span>
                 <span className={`text-xs px-1.5 py-0.5 rounded-full ${
                   currentNetwork.chainType === 'testnet' 
@@ -85,7 +86,7 @@ export default function NetworkSwitcher({
                 }`}>
                   {currentNetwork.chainType}
                 </span>
-              </div>
+              </>
             )}
           </div>
         </div>
@@ -102,10 +103,10 @@ export default function NetworkSwitcher({
             initial={{ opacity: 0, y: -10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
-            className="absolute top-full left-0 mt-2 bg-gray-900/95 backdrop-blur-sm border border-gray-700 rounded-xl overflow-hidden z-50 shadow-2xl min-w-72"
+            className="absolute top-full left-0 mt-2 bg-gray-900/95 backdrop-blur-sm border border-gray-700 rounded-xl overflow-hidden z-50 shadow-2xl min-w-64"
           >
             {/* Header */}
-            <div className="p-3 border-b border-gray-700/50 bg-gray-800/30">
+            <div className="p-2.5 border-b border-gray-700/50 bg-gray-800/30">
               <div className="flex items-center space-x-2">
                 <div className="w-5 h-5 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-lg flex items-center justify-center">
                   <Globe className="w-3 h-3 text-blue-400" />
@@ -128,7 +129,7 @@ export default function NetworkSwitcher({
                     key={network.id}
                     onClick={() => handleNetworkSwitch(network.id)}
                     disabled={isConnecting}
-                    className={`w-full flex items-center space-x-3 px-3 py-3 text-left transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
+                    className={`w-full flex items-center space-x-2.5 px-2.5 py-2 text-left transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
                       isSelected
                         ? 'bg-green-500/10 border-l-2 border-green-500'
                         : 'hover:bg-gray-800/50 border-l-2 border-transparent'
@@ -136,7 +137,7 @@ export default function NetworkSwitcher({
                     whileHover={{ x: isSelected ? 0 : 2 }}
                   >
                     <div className="relative flex-shrink-0">
-                      <div className={`w-9 h-9 rounded-xl flex items-center justify-center border ${
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center border ${
                         isTestnet 
                           ? 'bg-gradient-to-br from-yellow-400/20 to-orange-400/20 border-yellow-400/30' 
                           : 'bg-gradient-to-br from-green-400/20 to-emerald-400/20 border-green-400/30'
@@ -145,7 +146,7 @@ export default function NetworkSwitcher({
                           isTestnet ? 'text-yellow-400' : 'text-green-400'
                         }`} />
                       </div>
-                      <div className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 ${
+                      <div className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 ${
                         isTestnet ? 'bg-yellow-400' : 'bg-green-400'
                       } rounded-full border border-gray-900`} />
                     </div>
@@ -156,15 +157,15 @@ export default function NetworkSwitcher({
                           {network.name}
                         </p>
                         {isSelected && (
-                          <CheckCircle className="w-4 h-4 text-green-400 flex-shrink-0" />
+                          <CheckCircle className="w-3.5 h-3.5 text-green-400 flex-shrink-0" />
                         )}
                       </div>
-                      <div className="flex items-center space-x-2 mt-0.5">
-                        <span className="text-xs text-gray-400 font-semibold">
+                      <div className="flex items-center space-x-1.5 mt-0.5">
+                        <span className="text-xs text-gray-400 font-medium">
                           {network.symbol}
                         </span>
                         <span className="text-xs text-gray-600">•</span>
-                        <span className={`text-xs px-2 py-0.5 rounded-full ${
+                        <span className={`text-xs px-1.5 py-0.5 rounded-full ${
                           isTestnet 
                             ? 'bg-yellow-400/20 text-yellow-400' 
                             : 'bg-green-400/20 text-green-400'
@@ -172,16 +173,10 @@ export default function NetworkSwitcher({
                           {network.chainType}
                         </span>
                       </div>
-                      {isSelected && chainInfo && (
-                        <p className="text-xs text-gray-500 mt-1 truncate flex items-center">
-                          <Zap className="w-3 h-3 mr-1 text-green-400" />
-                          Connected: {chainInfo.chain}
-                        </p>
-                      )}
                     </div>
 
                     {isTestnet && (
-                      <AlertTriangle className="w-4 h-4 text-yellow-400 flex-shrink-0" />
+                      <AlertTriangle className="w-3.5 h-3.5 text-yellow-400 flex-shrink-0" />
                     )}
                   </motion.button>
                 )
@@ -189,9 +184,9 @@ export default function NetworkSwitcher({
             </div>
 
             {/* Footer Warning */}
-            <div className="border-t border-gray-700/50 p-3 bg-gray-800/30">
+            <div className="border-t border-gray-700/50 p-2.5 bg-gray-800/30">
               <div className="flex items-start space-x-2 text-xs">
-                <AlertTriangle className="w-4 h-4 text-yellow-400 flex-shrink-0 mt-0.5" />
+                <AlertTriangle className="w-3.5 h-3.5 text-yellow-400 flex-shrink-0 mt-0.5" />
                 <div className="text-gray-400">
                   <p className="font-medium text-yellow-400">Network Switch</p>
                   <p>Switching will disconnect current session and may affect pending transactions.</p>

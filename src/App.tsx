@@ -1,26 +1,22 @@
-import { useScroll, useTransform } from 'framer-motion'
-import {
-  HeroSection,
-  AboutSection,
-  SolutionSection,
-  FeaturesSection,
-  CTASection,
-  Footer
-} from './components'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { PolkadotProvider } from './contexts/PolkadotContext'
+import LandingPage from './pages/LandingPage'
+import CitySelection from './pages/CitySelection'
+import CityApp from './pages/CityApp'
 
 function App() {
-  const { scrollYProgress } = useScroll()
-  const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0])
-
   return (
-    <div className="min-h-screen bg-black text-white overflow-x-hidden">
-      <HeroSection opacity={opacity} />
-      <AboutSection />
-      <SolutionSection />
-      <FeaturesSection />
-      <CTASection />
-      <Footer />
-    </div>
+    <PolkadotProvider>
+      <Router>
+        <div className="min-h-screen bg-black text-white overflow-x-hidden">
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/cities" element={<CitySelection />} />
+            <Route path="/cities/:citySlug" element={<CityApp />} />
+          </Routes>
+        </div>
+      </Router>
+    </PolkadotProvider>
   )
 }
 

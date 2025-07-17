@@ -10,12 +10,19 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@polkadot/api": "^16.4.1",
+    "@polkadot/extension-dapp": "^0.61.4",
+    "@polkadot/keyring": "^13.5.3",
+    "@polkadot/util": "^13.5.3",
+    "@polkadot/util-crypto": "^13.5.3",
     "@splinetool/react-spline": "^4.1.0",
     "@tailwindcss/vite": "^4.1.11",
+    "@types/node": "^24.0.14",
     "framer-motion": "^12.23.6",
     "lucide-react": "^0.525.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "react-router-dom": "^7.7.0",
     "tailwindcss": "^4.1.11"
   },
   "devDependencies": {

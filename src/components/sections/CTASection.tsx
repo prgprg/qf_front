@@ -1,7 +1,9 @@
 import { motion } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
 import Button from '../ui/Button'
 
 export default function CTASection() {
+  const navigate = useNavigate()
   return (
     <section className="py-20 px-6 bg-black">
       <div className="max-w-4xl mx-auto text-center">
@@ -18,11 +20,11 @@ export default function CTASection() {
             Join your city's sustainability network and be part of the solution. Together, we can create lasting environmental change.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button>
+            <Button onClick={() => navigate('/cities')}>
               Get Started
             </Button>
-            <Button variant="secondary">
-              Learn More
+            <Button variant="secondary" onClick={() => navigate('/cities')}>
+              Explore Cities
             </Button>
           </div>
         </motion.div>

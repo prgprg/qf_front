@@ -121,32 +121,6 @@ export const mockProjects: Project[] = [
     tags: ['Sustainable Fashion', 'Waste Reduction', 'Circular Economy'],
     is_active: true,
     created_at: '2024-01-28T16:45:00Z'
-  },
-  {
-    contract_project_id: 5,
-    city_id: '00000000-0000-0000-0000-000000000001',
-    title: 'Aachen Energy Collective',
-    description: 'Community-driven renewable energy initiatives. We help residents organize solar panel cooperatives and energy-saving programs.',
-    image_url: 'https://images.unsplash.com/photo-1558804462-1ab0abe5a8ea?w=800&h=600&fit=crop',
-    creator_name: 'Michael Weber',
-    creator_address: '5Fre3kQbhyJcVXVxqXQKo7mKj9g4r8n2LpQzCtR5VgE3nKj2',
-    category: 'Environmental',
-    tags: ['Renewable Energy', 'Community Solar', 'Energy Efficiency'],
-    is_active: true,
-    created_at: '2024-02-01T08:30:00Z'
-  },
-  {
-    contract_project_id: 6,
-    city_id: '00000000-0000-0000-0000-000000000001',
-    title: 'Digital Skills for Seniors',
-    description: 'Bridging the digital divide by teaching technology skills to elderly residents, fostering intergenerational connections.',
-    image_url: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=800&h=600&fit=crop',
-    creator_name: 'Anna Hoffmann',
-    creator_address: '5GhK8QfVqV2LpR3nYvJ7rX9mQzN4tP6eW1sF8uC2dE5hRtY9',
-    category: 'Education',
-    tags: ['Digital Literacy', 'Senior Care', 'Intergenerational'],
-    is_active: true,
-    created_at: '2024-02-03T13:20:00Z'
   }
 ]
 

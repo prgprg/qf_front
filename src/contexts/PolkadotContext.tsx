@@ -63,7 +63,7 @@ export function PolkadotProvider({ children }: PolkadotProviderProps) {
   // Balance and network
   const [balance, setBalance] = useState<string | null>(null)
   const [isLoadingBalance, setIsLoadingBalance] = useState(false)
-  const [currentNetwork, setCurrentNetwork] = useState<NetworkConfig>(NETWORKS.assetHub)
+  const [currentNetwork, setCurrentNetwork] = useState<NetworkConfig>(NETWORKS.popNetwork)
   const availableNetworks = Object.values(NETWORKS)
   
   // Network and chain info
@@ -117,12 +117,27 @@ export function PolkadotProvider({ children }: PolkadotProviderProps) {
       console.log(`Connecting to ${currentNetwork.name}...`)
       
       const wsProvider = new WsProvider(currentNetwork.endpoint)
-      const apiInstance = await ApiPromise.create({ 
-        provider: wsProvider,
-        types: {
-          // Add any custom types if needed for your contract
+      
+      // Configure types based on network
+      const getNetworkTypes = () => {
+        if (currentNetwork.id === 'popNetwork') {
+          // POP Network specific types for contract compatibility
+          return {
+            // Contract-specific types for POP Network
+            ContractExecResult: 'ContractExecResult',
+            ContractInstantiateResult: 'ContractInstantiateResult',
+          }
         }
-      })
+        return undefined // Use default types for other networks
+      }
+      
+      const networkTypes = getNetworkTypes()
+      const apiConfig = { 
+        provider: wsProvider,
+        ...(networkTypes && { types: networkTypes })
+      }
+      
+      const apiInstance = await ApiPromise.create(apiConfig)
       
       await apiInstance.isReady
       

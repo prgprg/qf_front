@@ -19,6 +19,15 @@ export const NETWORKS: Record<string, NetworkConfig> = {
     ss58Format: 42,
     chainType: 'testnet'
   },
+  popNetwork: {
+    id: 'popNetwork',
+    name: 'POP Network (Paseo)',
+    endpoint: 'wss://rpc1.paseo.popnetwork.xyz',
+    symbol: 'DOT',
+    decimals: 10,
+    ss58Format: 42,
+    chainType: 'testnet'
+  },
   polkadot: {
     id: 'polkadot',
     name: 'Polkadot',

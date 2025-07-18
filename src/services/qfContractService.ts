@@ -1,16 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { contracts, paseo } from '@polkadot-api/descriptors'
-import { createInkSdk } from '@polkadot-api/sdk-ink'
+import { contracts, pop } from '@polkadot-api/descriptors'
+import { createReviveSdk } from '@polkadot-api/sdk-ink'
 import { createClient } from 'polkadot-api'
 import { withPolkadotSdkCompat } from 'polkadot-api/polkadot-sdk-compat'
 import { getWsProvider } from 'polkadot-api/ws-provider/web'
+import { decodeAddress } from '@polkadot/util-crypto'
+import { Binary } from 'polkadot-api'
 
 // Configuration
-const WS_PROVIDER_URL = 'wss://testnet-passet-hub.polkadot.io'
-const ADMIN_ADDRESS = '5G9G6KPc1h2f2npsRBj4Y97JVvJSGHKuuLnhJCCdHVH8der1'
+const WS_PROVIDER_URL = 'wss://rpc1.paseo.popnetwork.xyz'
+const ADMIN_ADDRESS = '5CBCeyMfRmv49BGZHm5Ef6RJw5vSydjtUxPB9XnSoktnWBEQ'
 
 // Deployed contract address
-const CONTRACT_ADDRESS = '0xc1dFdCE72Ed817DDcA6cfe296011516679Bb6618'
+const CONTRACT_ADDRESS = '0xaDF9DbF252D14Aa2999CCc6068f1649369363bb7'
 
 // Types matching our contract
 export interface QfRound {
@@ -68,15 +70,17 @@ export class QfContractService {
   private qfSdk: any
   private contract: any
 
+
+
   constructor() {
     // Initialize client and API
     this.client = createClient(
       withPolkadotSdkCompat(getWsProvider(WS_PROVIDER_URL))
     )
-    this.typedApi = this.client.getTypedApi(paseo)
+    this.typedApi = this.client.getTypedApi(pop)
     
     // Initialize QF contract SDK
-    this.qfSdk = createInkSdk(this.typedApi, contracts.qf_funding)
+    this.qfSdk = createReviveSdk(this.typedApi, contracts.qf_funding)
     
     // Contract is ready with deployed address
     this.contract = this.qfSdk.getContract(CONTRACT_ADDRESS)
@@ -144,24 +148,35 @@ export class QfContractService {
   ): Promise<number> {
     this.ensureInitialized()
 
+    // Convert Substrate address to H160 Binary format for polkadot-api
+    const h160Binary = this.substrateAddressToH160Binary(projectWallet)
+    console.log(`Adding project with wallet: ${projectWallet}`)
+
     const result = await this.contract
       .send('add_project', {
         origin: signerAccount,
         data: {
-          project_wallet: projectWallet
+          project_wallet: h160Binary
         }
       })
       .signAndSubmit(signer)
 
     if (result.ok) {
-      const events = this.contract.filterEvents(result.events)
-      console.log('Project added successfully:', events)
+      console.log('Project added successfully! Full result:', result)
       
-      // Extract project ID from events or return value
-      // This depends on how your contract emits events
-      return events.length // Placeholder - adjust based on actual event structure
+      // Check if we have events to filter
+      const events = result.events ? this.contract.filterEvents(result.events) : []
+      console.log('Filtered events:', events)
+      
+      // For now, return a placeholder project ID since we can't extract from events yet
+      // In a real implementation, you'd parse the contract events to get the actual project ID
+      const projectId = 1 // Placeholder - should be extracted from contract events
+      console.log('Generated project ID:', projectId)
+      
+      return projectId
     } else {
-      throw new Error(`Failed to add project: ${result.dispatchError}`)
+      console.error('Contract call failed:', result)
+      throw new Error(`Failed to add project: ${result.dispatchError || 'Unknown error'}`)
     }
   }
 
@@ -365,7 +380,25 @@ export class QfContractService {
     return rounds
   }
 
-  // =================== UTILITY FUNCTIONS ===================
+    // =================== UTILITY FUNCTIONS ===================
+
+  /**
+   * Convert Substrate address to H160 Binary format for polkadot-api
+   */
+  private substrateAddressToH160Binary(substrateAddress: string): any {
+    try {
+      // Decode the SS58 address to bytes
+      const addressBytes = decodeAddress(substrateAddress)
+      
+      // Take the first 20 bytes for H160 (Ethereum address format)
+      const h160Bytes = addressBytes.slice(0, 20)
+      
+      // Create Binary object which has the asBytes() method polkadot-api expects
+      return Binary.fromBytes(h160Bytes)
+    } catch (error) {
+      throw new Error(`Invalid Substrate address: ${substrateAddress} - ${error instanceof Error ? error.message : 'Unknown error'}`)
+    }
+  }
 
   /**
    * Format contract response to QfRoundData

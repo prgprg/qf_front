@@ -56,6 +56,7 @@ export interface Contribution {
   contributor: string
   amount: number
   timestamp: number
+  round_id: number
 }
 
 export interface ContractProject {
@@ -66,11 +67,15 @@ export interface ContractProject {
 
 export interface Round {
   round_id: number
-  status: 'upcoming' | 'active' | 'completed'
+  status?: 'upcoming' | 'active' | 'completed'
   start_time: number
   end_time: number
   matching_pool: number
   time_remaining?: number
+  eligible_projects: number[]
+  is_finalized?: boolean
+  active?: boolean
+  final_alpha?: number
 }
 
 export interface RoundData {

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback } from 'react'
 import type { ReactNode } from 'react'
 import { ApiPromise, WsProvider } from '@polkadot/api'
 import { web3Accounts, web3Enable, web3FromSource } from '@polkadot/extension-dapp'
